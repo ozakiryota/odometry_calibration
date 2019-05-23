@@ -64,21 +64,25 @@ void SearchMinError::Search(void)
 	double opt_t = ini_t;
 	double min_error = ComputationError(x, y);
 
-	/* double range = 0.1; */
-	/* int resolution = 100; */
-	/* for(int i=-resolution;i<resolution;i++){ */
-	/* 	for(int j=-resolution;j<resolution;j++){ */
-	/* 		double r = ini_r + range/(double)resolution; */
-	/* 		double l = ini_l + range/(double)resolution; */
-	/* 		Integration(r, l, ini_t, x, y, theta); */
-	/* 		double error = ComputationError(x, y); */
-	/* 		if(error<min_error){ */
-	/* 			opt_r = r; */
-	/* 			opt_l = l; */
-	/* 			// opt_t = t; */
-	/* 		} */
-	/* 	} */
-	/* } */
+	double onestep = 0.0001;
+	int resolution = 200;
+	for(int i=-resolution/2;i<resolution/2;i++){
+		for(int j=-resolution/2.0;j<resolution/2.0;j++){
+			double r = ini_r + i*onestep;
+			double l = ini_l + j*onestep;
+			Integration(r, l, ini_t, x, y, theta);
+			double error = ComputationError(x, y);
+			if(error<min_error){
+				opt_r = r;
+				opt_l = l;
+				// opt_t = t;
+			}
+		}
+	}
+	std::cout << "ini_r = " << ini_r << std::endl;
+	std::cout << "ini_l = " << ini_l << std::endl;
+	std::cout << "opt_r = " << opt_r << std::endl;
+	std::cout << "opt_l = " << opt_l << std::endl;
 }
 
 void SearchMinError::Integration(double r, double l, double t, double& x, double& y, double& theta)
@@ -101,7 +105,7 @@ void SearchMinError::Integration(double r, double l, double t, double& x, double
 		double w = (r*wr - l*wl)/t;
 
 		x += v*cos(theta);
-		y -= v*sin(theta);
+		y += v*sin(theta);
 		theta -= w;
 	}
 
