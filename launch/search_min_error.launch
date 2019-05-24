@@ -1,0 +1,11 @@
+<launch>
+	<!-- main -->
+	<node pkg="odometry_calibration" type="search_min_error" name="search_min_error" output="screen">
+		<param name="ini_r" type="double" value="0.125"/>
+		<param name="ini_l" type="double" value="0.125"/>
+		<param name="ini_t" type="double" value="0.45"/>
+		<param name="rl_onestep" type="double" value="0.0001"/>
+		<param name="t_onestep" type="double" value="0.0001"/>
+		<param name="resolution" type="int" value="100"/>
+	</node>
+</launch>

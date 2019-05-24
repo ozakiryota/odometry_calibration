@@ -13,8 +13,11 @@ class SearchMinError{
 		double fin_x;
 		double fin_y;
 		double fin_theta;
+		double rl_onestep;
+		double t_onestep;
+		int resolution;
 		/*file*/
-		FILE *fp;
+		// FILE *fp;
 	public:
 		SearchMinError();
 		void GetFinal(void);
@@ -29,12 +32,16 @@ SearchMinError::SearchMinError()
 	nhPrivate.param("ini_r", ini_r, 0.125);
 	nhPrivate.param("ini_l", ini_l, 0.125);
 	nhPrivate.param("ini_t", ini_t, 0.45);
+	nhPrivate.param("rl_onestep", rl_onestep, 0.0001);
+	nhPrivate.param("t_onestep", t_onestep, 0.0001);
+	nhPrivate.param("resolution", resolution, 100);
 
 	GetFinal();
 }
 
 void SearchMinError::GetFinal(void)
 {
+	FILE *fp;
 	if((fp = fopen("/home/amsl/Desktop/data.csv", "r")) == NULL){
 		printf("file open error!!\n");
 		exit(EXIT_FAILURE);
@@ -54,7 +61,7 @@ void SearchMinError::GetFinal(void)
 
 	fclose(fp);
 }
-
+#include<omp.h>
 void SearchMinError::Search(void)
 {
 	double x, y, theta;
@@ -64,29 +71,47 @@ void SearchMinError::Search(void)
 	double opt_t = ini_t;
 	double min_error = ComputationError(x, y);
 
-	double onestep = 0.0001;
-	int resolution = 200;
+
+	std::cout << "rl: " << -resolution/2*rl_onestep << " ~ +" << resolution/2*rl_onestep << std::endl;
+	std::cout << "t: " << -resolution/2*t_onestep << " ~ +" << resolution/2*t_onestep << std::endl;
+	std::cout << "resolution = " << resolution << std::endl;
+	std::cout << "Searching..." << std::endl;
+	ros::Time t_start = ros::Time::now();
+
+	#pragma omp parallel for
 	for(int i=-resolution/2;i<resolution/2;i++){
-		for(int j=-resolution/2.0;j<resolution/2.0;j++){
-			double r = ini_r + i*onestep;
-			double l = ini_l + j*onestep;
-			Integration(r, l, ini_t, x, y, theta);
-			double error = ComputationError(x, y);
-			if(error<min_error){
-				opt_r = r;
-				opt_l = l;
-				// opt_t = t;
+		for(int j=-resolution/2;j<resolution/2;j++){
+			for(int k=-resolution/2;k<resolution/2;k++){
+				double r = ini_r + i*rl_onestep;
+				double l = ini_l + j*rl_onestep;
+				double t = ini_t + k*t_onestep;
+				Integration(r, l, t, x, y, theta);
+				double error = ComputationError(x, y);
+				if(error<min_error){
+					min_error = error;
+					opt_r = r;
+					opt_l = l;
+					opt_t = t;
+				}
 			}
 		}
+		/* std::cout << "Progress: " << (i + resolution/2)/(double)resolution*100 << " [%]" << std::endl; */
 	}
+
+	ros::Time t_end = ros::Time::now();
+	std::cout << "Searching time: " << (t_end - t_start).toSec() << std::endl;
+
 	std::cout << "ini_r = " << ini_r << std::endl;
 	std::cout << "ini_l = " << ini_l << std::endl;
+	std::cout << "ini_t = " << ini_t << std::endl;
 	std::cout << "opt_r = " << opt_r << std::endl;
 	std::cout << "opt_l = " << opt_l << std::endl;
+	std::cout << "opt_t = " << opt_t << std::endl;
 }
 
 void SearchMinError::Integration(double r, double l, double t, double& x, double& y, double& theta)
 {
+	FILE *fp;
 	if((fp = fopen("/home/amsl/Desktop/data.csv", "r")) == NULL){
 		printf("file open error!!\n");
 		exit(EXIT_FAILURE);
@@ -109,9 +134,9 @@ void SearchMinError::Integration(double r, double l, double t, double& x, double
 		theta -= w;
 	}
 
-	std::cout << "x = " << x << std::endl;
-	std::cout << "y = " << y << std::endl;
-	std::cout << "theta/M_PI*180.0 = " << theta/M_PI*180.0 << std::endl;
+	/* std::cout << "x = " << x << std::endl; */
+	/* std::cout << "y = " << y << std::endl; */
+	/* std::cout << "theta/M_PI*180.0 = " << theta/M_PI*180.0 << std::endl; */
 
 	fclose(fp);
 }
