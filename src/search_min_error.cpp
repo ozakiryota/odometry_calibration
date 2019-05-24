@@ -72,13 +72,19 @@ void SearchMinError::Search(void)
 	double min_error = ComputationError(x, y);
 
 
-	std::cout << "rl: " << -resolution/2*rl_onestep << " ~ +" << resolution/2*rl_onestep << std::endl;
-	std::cout << "t: " << -resolution/2*t_onestep << " ~ +" << resolution/2*t_onestep << std::endl;
+	std::cout << "ini_r = " << ini_r << std::endl;
+	std::cout << "ini_l = " << ini_l << std::endl;
+	std::cout << "ini_t = " << ini_t << std::endl;
+	std::cout << "range-r: " << ini_r - resolution/2*rl_onestep << " ~ " << ini_r + resolution/2*rl_onestep << std::endl;
+	std::cout << "range-l: " << ini_l - resolution/2*rl_onestep << " ~ " << ini_l + resolution/2*rl_onestep << std::endl;
+	std::cout << "range-t: " << ini_t - resolution/2*t_onestep << " ~ " << ini_t + resolution/2*t_onestep << std::endl;
 	std::cout << "resolution = " << resolution << std::endl;
+	std::cout << "rl_onestep = " << rl_onestep << std::endl;
+	std::cout << "t_onestep = " << t_onestep << std::endl;
 	std::cout << "Searching..." << std::endl;
 	ros::Time t_start = ros::Time::now();
 
-	#pragma omp parallel for
+	/* #pragma omp parallel for */
 	for(int i=-resolution/2;i<resolution/2;i++){
 		for(int j=-resolution/2;j<resolution/2;j++){
 			for(int k=-resolution/2;k<resolution/2;k++){
@@ -99,11 +105,8 @@ void SearchMinError::Search(void)
 	}
 
 	ros::Time t_end = ros::Time::now();
-	std::cout << "Searching time: " << (t_end - t_start).toSec() << std::endl;
+	std::cout << "Searching time: " << (t_end - t_start).toSec() << " [s]" << std::endl;
 
-	std::cout << "ini_r = " << ini_r << std::endl;
-	std::cout << "ini_l = " << ini_l << std::endl;
-	std::cout << "ini_t = " << ini_t << std::endl;
 	std::cout << "opt_r = " << opt_r << std::endl;
 	std::cout << "opt_l = " << opt_l << std::endl;
 	std::cout << "opt_t = " << opt_t << std::endl;
