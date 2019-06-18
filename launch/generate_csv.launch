@@ -23,5 +23,9 @@
 	</node>
 
 	<!-- main -->
-	<node pkg="odometry_calibration" type="generate_csv" name="generate_csv" output="screen"/>
+	<node pkg="odometry_calibration" type="generate_csv" name="generate_csv" output="screen">
+		<param name="ini_r" type="double" value="0.1239"/>
+		<param name="ini_l" type="double" value="0.1240"/>
+		<param name="ini_t" type="double" value="0.4548"/>
+	</node>
 </launch>
