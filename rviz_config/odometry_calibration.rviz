@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Odometry2
       Splitter Ratio: 0.5
     Tree Height: 775
   - Class: rviz/Selection
@@ -58,6 +57,16 @@ Visualization Manager:
       Name: Odometry
       Position Tolerance: 0.100000001
       Topic: /odom/reset_origin
+      Value: true
+    - Angle Tolerance: 0.100000001
+      Class: rviz/Odometry
+      Color: 0; 255; 0
+      Enabled: true
+      Keep: 100
+      Length: 1
+      Name: Odometry
+      Position Tolerance: 0.100000001
+      Topic: /gyrodometry
       Value: true
     - Angle Tolerance: 0.100000001
       Class: rviz/Odometry

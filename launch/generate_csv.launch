@@ -4,7 +4,9 @@
 
 	<!-- rosbag -->
 	<!-- <node pkg="rosbag" type="play" name="player" args="&#45;&#45;clock /home/amsl/ozaki/bagfiles/cats/odometry_calibration/2019&#45;05&#45;23&#45;12&#45;26&#45;30.bag &#45;r 1"/> -->
-	<node pkg="rosbag" type="play" name="player" args="--clock /home/amsl/ozaki/bagfiles/cats/odometry_calibration/2019-06-18-14-22-20.bag"/>
+	<!-- <node pkg="rosbag" type="play" name="player" args="&#45;&#45;clock /home/amsl/ozaki/bagfiles/cats/odometry_calibration/2019&#45;06&#45;18&#45;14&#45;22&#45;20.bag"/> -->
+	<!-- <node pkg="rosbag" type="play" name="player" args="&#45;&#45;clock /home/amsl/ozaki/bagfiles/cats/odometry_calibration/2019&#45;06&#45;18&#45;14&#45;28&#45;40.bag"/> -->
+	<node pkg="rosbag" type="play" name="player" args="--clock /home/amsl/ozaki/bagfiles/cats/odometry_calibration/2019-06-18-14-41-34.bag"/>
 
 	<!-- rviz -->
 	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find odometry_calibration)/rviz_config/odometry_calibration.rviz"/>
@@ -25,8 +27,13 @@
 
 	<!-- main -->
 	<node pkg="odometry_calibration" type="generate_csv" name="generate_csv" output="screen">
-		<param name="ini_r" type="double" value="0.1239"/>
-		<param name="ini_l" type="double" value="0.1240"/>
+		<param name="ini_r" type="double" value="0.1244"/>
+		<param name="ini_l" type="double" value="0.1242"/>
 		<param name="ini_t" type="double" value="0.4548"/>
+	</node>
+
+	<!-- comparisons	 -->
+	<node pkg="gyrodometry" name="gyrodometry3d" type="gyrodometry3d" output="screen">
+		<remap from="/odom" to="/odom/reset_origin"/>
 	</node>
 </launch>
